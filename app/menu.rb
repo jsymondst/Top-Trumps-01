@@ -35,9 +35,6 @@ class Menu
                     puts "Sorry, I didn't understand #{input}, please try PLAY, STATS or EXIT."
             end
         end
-
-        
-
     end
     def self.play_menu
 
@@ -61,8 +58,7 @@ class Menu
         
         while !player_id
             
-            input = gets.chomp
-            
+            input = gets.chomp            
             
             if input == "New"
                 puts "Please input your new player's name"

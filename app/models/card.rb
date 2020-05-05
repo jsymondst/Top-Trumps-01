@@ -6,13 +6,15 @@ class Card < ActiveRecord::Base
         #use filename later
         # csv_text = File.read(filename)
 
+        # Card.destroy_all
+
         csv_text = File.read('./decks/Top Trumps - the Simpsons.csv')
     
         csv_table = csv_text.split("\r\n")
 
         #set_headers
         header_row = csv_table[0].split(",")
-            # @@header0 = header_row[0]
+            # @@header0 = header_row[0] 
             @@header1 = header_row[1]
             @@header2 = header_row[2]
             @@header3 = header_row[3]
@@ -35,35 +37,11 @@ class Card < ActiveRecord::Base
             end
     end
 
+    def self.headers
+        # ["Name", "1. #{@@header1}", "2. #{@@header2}", "3. #{@@header3}", "4. #{@@header4}", "5. #{@@header5}", "6. #{@@header6}"]
+        ["Name", @@header1, @@header2, @@header3, @@header4, @@header5, @@header6 ]
+    end
 
+    
 end
 
-binding.pry
-
-
-
-
-
-
-                
-        
-    
-   
-    # # csv = CSV.parse(csv_text, :headers => true, :col_sep => ",")
-    # # csv.each do |row|
-    # # Moulding.create!(row.to_hash)
-    # # end
-
-    # # def self.new_from_csv(csv_data)
-    # #     rows = csv_date.split("\n")
-    # #     people = rows.collect do |row|
-    # #         data = row.split(", ")
-    # #         individual = data[0]
-    # #         most_lovable = data[1]
-    # #         smartest = data[2]
-    # #         fattest = data[3]
-    # #         biggest_nerd = data[4]
-    # #         greatest_anarchist = data[5]
-    # #         walk_of_fame_rating = data[6]
-    # #     end
-    # # end

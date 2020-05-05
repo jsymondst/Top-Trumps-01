@@ -15,18 +15,17 @@ class Menu
         
         while !valid_input do        
         
-            input = gets.chomp
+            input = STDIN.gets.chomp
             downcase_input = input.downcase # make lowercase
               
             case downcase_input
                 when "play"
                     valid_input = true
-                    puts "Going to play menu!"
-                    # play_menu
+                    play_menu
+                    
                 when "stats"
                     valid_input = true
-                    puts "Stats are fun too!"
-                    # stats_menu
+                    Stats.menu
                 when "exit", "quit"
                     valid_input = true
                     puts "Bye!"
@@ -37,14 +36,9 @@ class Menu
         end
     end
     def self.play_menu
-
-        player_id = select_player
-        deck_id = select_deck
-
-        puts "Starting a new game with deck_id #{deck_id} and player_id #{player_id}."
-
-        # Game.new(player_id, deck_id)
-                        
+        player = Player.select_a_player
+        deck = Deck.select_a_deck
+        Game.start(player:player, deck:deck)                        
     end
 
     def self.select_player
@@ -58,11 +52,11 @@ class Menu
         
         while !player_id
             
-            input = gets.chomp            
+            input = STDIN.gets.chomp            
             
             if input == "New"
                 puts "Please input your new player's name"
-                new_player = gets.chomp
+                new_player = STDIN.gets.chomp
                 puts "Created new player #{new_player}"
                 players << new_player
                 player_id = players.find_index(input)
@@ -91,7 +85,7 @@ class Menu
         
         while !deck_id
             
-            input = gets.chomp
+            input = STDIN.gets.chomp
                         
             if decks.include?(input)
                 deck_id = decks.find_index(input)
@@ -111,11 +105,11 @@ class Menu
 
 end
 
-Menu.splash
+# Menu.splash
 
 # Menu.root_menu
 
 
 
-Menu.play_menu
+# Menu.play_menu
 

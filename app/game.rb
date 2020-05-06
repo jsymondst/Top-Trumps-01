@@ -113,7 +113,7 @@ class Game
         self.deal
 
         result = nil
-        binding.pry
+
         while !result do
             self.player_clash
             if player_points == 5

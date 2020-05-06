@@ -26,40 +26,6 @@ class Stats
             Menu.root_menu
         end
         
-        # puts "Would you like PLAYER, DECK or RANKING stats? MENU returns to main menu."
-        
-        # valid_input = false
-        # while !valid_input do
-        #     input = STDIN.gets.chomp.upcase            
-        #     options = ["PLAYER","DECK", "RANKING", "MENU", "EXIT"]
-        #     if options.include?(input)
-        #         valid_input = true
-        #     else
-        #         print "Sorry I don't understand #{input}, please try " 
-        #         options.each{|option| print "#{option.upcase} "}
-        #         print "\n"
-        #     end
-        # end
-
-        # case input
-        # when "PLAYER"
-        #     player = Player.select_a_player
-        #     player_stats(player)
-        #     menu
-        # when "DECK"
-        #     deck = Deck.select_a_deck
-        #     deck_stats(deck)
-        #     menu
-        # when "RANKING"
-        #     rankings
-        #     menu
-        # when "MENU"
-        #     puts "returning to main menu"
-        #     Menu.root_menu
-        # when "EXIT"
-        #     puts "Bye!"
-        #     exit
-        # end
     end
 
     def self.deck_stats(deck)
@@ -71,6 +37,7 @@ class Stats
         else
             header_row = ["Player Name", "Wins", "Losses", "%"]
             
+            #tabulate our results
             result_array = deck.players.uniq.map do |player| 
                 row_name = player.name
                 row_wins = GameRecord.where(player_id: player.id, deck_id: deck.id).sum(:win)
@@ -94,6 +61,7 @@ class Stats
         else     
             header_row = ["Deck Name", "Wins", "Losses", "%"]
             
+            #tabulate our results
             result_array = player.decks.uniq.map do |deck| 
                 row_name = deck.name
                 row_wins = GameRecord.where(deck_id: deck.id, player_id: player.id).sum(:win)
@@ -112,6 +80,7 @@ class Stats
     def self.rankings
         header_row = ["Player Name", "Wins", "Losses", "%"]
 
+        #tabulate our results
         result_array = Player.all.map do |player|
 
             row_name = player.name

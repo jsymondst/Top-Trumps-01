@@ -12,65 +12,58 @@ class Game
         @ai_points = 0
     end
 
-    #newgame = Game.new
-    #newgame.run
-
-    def run
-        puts "win or lose?"
-        input = STDIN.gets.chomp.downcase
-        
-        case input
-        when "win"
-            GameRecord.create(player_id:player.id, deck_id:deck.id, win:1, loss: 0)
-        when "lose"
-            GameRecord.create(player_id:player.id, deck_id:deck.id, win:0, loss: 1)
-        end
-    end
-
     def self.start(deck:, player:)
+        #create a game and start playing
         new_game = self.new(deck: deck,player: player)
-        # new_game.deal
         new_game.play
     end
 
-
        
     def deal
-        Card.import_deck(deck) #REMEMBER TO CHANGE THIS!
-        stack = Card.all.shuffle
+        #Use the selected deck to create the player's hands
+
+        Card.import_deck(deck) # Import the deck!
+        stack = Card.all.shuffle #Shuffle the deck
+
+        #Give half the deck to each player
         @player_stack = stack[0 ... (stack.length/2)]
         @ai_stack = stack[(stack.length/2) .. stack.length]
-        @headers = Card.headers
-        @table_headers = Card.table_headers
+
+        # import the categories
+        headers = Card.headers
+        table_headers = Card.table_headers
+
+        #tell the user what's happened
         PROMPT.keypress("Dealt each player #{@player_stack.length} cards.", timeout: 3)
         
     end
 
     def player_clash
-        #clear
-        #Show me my card (and current points)
-        #I choose a stat
-        #compete
-        #Show result
-        #tally the point
-
+        #The main game action.
+        
         system("clear")
         
-        puts "Your Points: #{player_points} | Opponents Points: #{ai_points}"
+        #Game Status
+        puts "Your Points: #{player_points} | Opponent's Points: #{ai_points}"
         puts "Your card:"
 
+        #grab the first card from each player's stack and import the values
+        
         player_card = self.player_stack.shift
         ai_card = self.ai_stack.shift
         player_card_values = player_card.card_values
         ai_card_values = ai_card.card_values
+
+        #Import card values into a table and render it
         
-        card_table = TTY::Table.new table_headers, [player_card_values]
-
+        card_table = TTY::Table.new table_headers, [player_card_values]        
         puts card_table.render(:ascii)
-
+        
+        #Choose a stat
+        
         prompt = "Select a stat from 1 to #{deck.playable_columns}"
         options = (1..deck.playable_columns).map{|index|index.to_s}
-
+        
         selected = false
         while !selected do
             puts prompt
@@ -78,16 +71,19 @@ class Game
             selected = options.include?(input)
         end
         input = input.to_i
-
+        
+        #Show selected stats        
+        
         player_value = player_card_values[input].to_f
         ai_value = ai_card_values[input].to_f
-
+        
         player_results = ["Your Card:", player_card.name + "  ", headers[input]+":", player_value]
         ai_results = ["Their Card:", ai_card.name+ "  ", headers[input]+":", ai_value]
-
+        
         result_table = TTY::Table.new(player_results, [ai_results])
-
         puts result_table.render
+
+        #Compare stats
 
         if player_value > ai_value
             puts "You won!"
@@ -99,9 +95,12 @@ class Game
             puts "It was a Draw!"
         end
 
-        PROMPT.keypress("", timeout: 3)
+        #Show scores before we go again.
+
+        PROMPT.keypress("Your Points: #{player_points} | Opponent's Points: #{ai_points}", timeout: 3)
 
     end
+        
 
 
     def play
@@ -110,7 +109,11 @@ class Game
         puts "Okay #{player.name}, it's time to test your knowledge of #{deck.name}."
         puts "We'll keep going to 5 points."
         PROMPT.keypress("Ready?", timeout: 2)
+
+        #Deal!
         self.deal
+
+        #Start playing
 
         result = nil
 
@@ -123,10 +126,14 @@ class Game
             end
         end
 
+        #Game complete...
+
         case result
         when "win"
             system("clear")
-            puts "Congratulations, You win!\n "
+            splash = File.read("./bin/win_splash.txt")
+            puts splash
+            # puts "Congratulations, You win!\n "
             puts "Final Score:"
             puts "Player: #{player_points} | Opponent: #{ai_points}\n "
 
@@ -166,12 +173,11 @@ class Game
     end
 
     def self.dummygame
+        #create a dummy game for testing.
         new_game = self.new(deck: Deck.second, player:Player.first)
         new_game.deal
         new_game
     end
 
-
-
-
 end
+

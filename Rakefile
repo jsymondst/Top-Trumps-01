@@ -5,3 +5,9 @@ desc "Start our app console"
 task :console do
   Pry.start
 end
+
+desc "Start the game"
+task :run do
+  Menu.splash
+  Menu.root_menu
+end

@@ -1,115 +1,50 @@
 class Menu
 
+    PROMPT = TTY::Prompt.new
+
     def self.splash
-        puts "WELCOME TO TOP TRUMPS!"
-        puts "built by Zack and Jamie"
+        system("clear")
+        splash_art =  File.read("./bin/splash_art.txt")
+        puts splash_art
+        PROMPT.keypress("Press any key to continue", timeout:5)
     end
 
     def self.root_menu
-        puts "What would you like to do?"
-        puts "PLAY to play the game."
-        puts "STATS to see player and deck stats"
-        puts "EXIT to leave the game"
+        system("clear")
+        context = "Main Menu"
+        options = ["Play", "Stats", "Manage Players", "Exit"]
+
+        selection = PROMPT.select(context,options)
            
-        valid_input = false
-        
-        while !valid_input do        
-        
-            input = STDIN.gets.chomp
-            downcase_input = input.downcase # make lowercase
-              
-            case downcase_input
-                when "play"
-                    valid_input = true
-                    play_menu
-                    
-                when "stats"
-                    valid_input = true
-                    Stats.menu
-                when "exit", "quit"
-                    valid_input = true
-                    puts "Bye!"
-                    exit
-                else
-                    puts "Sorry, I didn't understand #{input}, please try PLAY, STATS or EXIT."
-            end
+        case selection
+            when "Play"
+                play_menu
+            when "Stats"
+                Stats.menu
+            when "Manage Players"
+                Player.manage_players
+            when "Exit"
+                puts "Bye!"
+                exit
         end
+        
     end
     def self.play_menu
-        player = Player.select_a_player
+        player = Player.create_or_select_a_player
         deck = Deck.select_a_deck
-        Game.start(player:player, deck:deck)                        
+
+        #Confirm readiness
+        context = "Player: #{player.name}, Deck: #{deck.name}. Ready to start?"
+        options = ["Play", "Main Menu"]
+        
+        selection = PROMPT.select(context, options)
+        case selection
+            when "Play"
+                Game.start(player:player, deck:deck)
+            when "Main Menu"
+                root_menu
+        end         
     end
 
-    def self.select_player
-
-        players = ["zack", "jamie"]        
-        
-        puts "Select a player or type new for a new player"      
-        puts players
-
-        player_id = nil
-        
-        while !player_id
-            
-            input = STDIN.gets.chomp            
-            
-            if input == "New"
-                puts "Please input your new player's name"
-                new_player = STDIN.gets.chomp
-                puts "Created new player #{new_player}"
-                players << new_player
-                player_id = players.find_index(input)
-                puts "Playing as #{input}"
-            elsif players.include?(input)
-                player_id = players.find_index(input)
-                puts "Playing as #{input}"
-                
-                # player_object = Player.find_by_name(downcase_input)
-                # player_id = player_object.id
-            else 
-                puts "I can't find player #{input}. Please try again or type new to create a new player"
-            end
-        end
-
-        player_id
-
-    end
-
-    def self.select_deck
-        decks = ["simpsons", "harrypotter"]        
-        puts "Select a deck. \n"
-        puts decks
-
-        deck_id = nil
-        
-        while !deck_id
-            
-            input = STDIN.gets.chomp
-                        
-            if decks.include?(input)
-                deck_id = decks.find_index(input)
-                puts "Playing with the \'#{input}\' deck"
-                
-                # deck_object = deck.find_by_name(downcase_input)
-                # deck_id = deck_object.id
-            else 
-                puts "I can't find deck #{input}. Please try again."
-            end
-        end
-
-        deck_id
-
-    end
-
-
+    
 end
-
-# Menu.splash
-
-# Menu.root_menu
-
-
-
-# Menu.play_menu
-

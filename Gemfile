@@ -7,4 +7,5 @@ gem 'rake'
 gem "sqlite3"
 gem "pry"
 gem "require_all"
+gem 'tty-prompt'
 gem 'tty-table'

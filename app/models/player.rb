@@ -1,42 +1,70 @@
 class Player < ActiveRecord::Base
 
+    PROMPT = TTY::Prompt.new
+    
     has_many :game_records
     has_many :decks, through: :game_records
 
+    def self.player_names
+        Player.all.map {|player| player.name}
+    end
+
     def self.select_a_player
-        puts "Please select a player or type NEW for a new player."
+
+        puts "Please select a player."
         player_names = Player.all.map {|player| player.name}
-        puts "Available players: "
-        puts player_names
+
+        context = "Available players: "
+        options = player_names
+
+        selection = PROMPT.select(context,options)
         
-        valid_input = false
-        while !valid_input do
-            input = STDIN.gets.chomp            
-            options = player_names.concat(["NEW"])
-            if options.include?(input)
-                valid_input = true
+        Player.find_by(name: selection)
+
+    end
+       
+    
+    def self.create_or_select_a_player
+        
+        player_names = Player.all.map {|player| player.name}
+
+        options = player_names.unshift("New")
+        context = "Please select a player."
+
+        selection = PROMPT.select(context,options)
+
+        if selection == "New"
+            name = PROMPT.ask("New player name: ")
+            player = Player.create(name: name)
+        else
+            player = Player.find_by(name: selection)
+        end
+
+        player   
+        
+    end
+
+    def self.manage_players
+        system("clear")
+        context = "Select a player to delete."
+        options = player_names << "BACK"
+        
+        selection = PROMPT.select(context, options)
+
+        if selection == "BACK"
+            Menu.root_menu
+        else
+            player = Player.find_by(name: selection)
+            confirmation = PROMPT.ask("Are you sure you want to delete #{player.name}?\n Please type 'DELETE' to confirm. \n")
+            if confirmation.upcase == "DELETE"
+                name = player.name
+                player.destroy
+                PROMPT.keypress("Deleted #{name}. Returning to main menu.", timeout:2)
+                Menu.root_menu
             else
-                print "Sorry I don't understand #{input}, please try " 
-                options.each{|option| print "#{option} "}
-                print "\n"
+                PROMPT.keypress("Delete cancelled. Returning to main menu.", timeout:2)
+                Menu.root_menu
             end
         end
-
-        if input == "NEW"
-            #request a name
-            puts "Please input a player name:"
-            name_input = STDIN.gets.chomp
-            #create a player
-            selected_player = Player.create(name: name_input)
-            #return that player
-            puts "Created player #{name_input}."
-        else
-            # return the right player
-            selected_player = Player.find_by(name: input)
-            "Selected #{input}."
-        end
-
-        selected_player
-        
     end
 end

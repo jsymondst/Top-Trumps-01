@@ -54,7 +54,13 @@ class Card < ActiveRecord::Base
     end
 
 
-
+    def render
+        table_headers = self.class.table_headers
+        card_values = self.card_values
+        
+        card_table = TTY::Table.new table_headers, [card_values]        
+        puts card_table.render(:ascii)
+    end
     
 
     

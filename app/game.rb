@@ -248,6 +248,7 @@ class Game
         when "Play Again"
             puts "Okay, let's go again"
             sleep(1.5)
+            Menu.play_menu
             Game.start(deck: self.deck, player: self.player)
         when "Main Menu"
             puts "Returning to main menu"

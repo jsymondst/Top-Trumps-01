@@ -3,7 +3,10 @@ Top Trumps!
 Install instructions:
 
 Clone the repo
-Run `bundle install
-rake db:seed to seed the deck information
 
-rake run to run the app
+Install gems with 'bundle install'
+
+Import deck information with 'rake db:seed'
+
+Run the app with 'rake run'
+

@@ -2,23 +2,22 @@
 # require 'pry'
 class Card < ActiveRecord::Base
 
-    def self.import_deck(filename)
+    def self.import_deck(deck)
         #use filename later
         # csv_text = File.read(filename)
 
-        csv_text = File.read('./decks/Top Trumps - the Simpsons.csv')
+        @@deck = deck
+
+        Card.destroy_all
+
+        csv_text = File.read(deck.deck_path)
     
         csv_table = csv_text.split("\r\n")
 
         #set_headers
         header_row = csv_table[0].split(",")
-            # @@header0 = header_row[0]
-            @@header1 = header_row[1]
-            @@header2 = header_row[2]
-            @@header3 = header_row[3]
-            @@header4 = header_row[4]
-            @@header5 = header_row[5]
-            @@header6 = header_row[6]
+        @@headers = header_row
+        @@headers[0] = "Name"
             
         # create the rows
             data_array = csv_table[1 ... csv_table.length].map{|row| row.split(",")}
@@ -35,35 +34,35 @@ class Card < ActiveRecord::Base
             end
     end
 
+    def self.headers
+       @@headers.slice(0,deck.column_count)
+    end
 
+    def self.deck
+        @@deck
+    end
+    def deck
+        @@deck
+    end
+
+    def self.table_headers
+        ["Name", "1. #{headers[1]}", "2. #{headers[2]}", "3. #{headers[3]}", "4. #{headers[4]}", "5. #{headers[5]}", "6. #{headers[6]}"].slice(0,deck.column_count)
+    end
+
+    def card_values
+        [self.name, self.val1, self.val2, self.val3, self.val4, self.val5, self.val6].slice(0,deck.column_count)
+    end
+
+
+    def render
+        table_headers = self.class.table_headers
+        card_values = self.card_values
+        
+        card_table = TTY::Table.new table_headers, [card_values]        
+        puts card_table.render(:ascii)
+    end
+    
+
+    
 end
 
-binding.pry
-
-
-
-
-
-
-                
-        
-    
-   
-    # # csv = CSV.parse(csv_text, :headers => true, :col_sep => ",")
-    # # csv.each do |row|
-    # # Moulding.create!(row.to_hash)
-    # # end
-
-    # # def self.new_from_csv(csv_data)
-    # #     rows = csv_date.split("\n")
-    # #     people = rows.collect do |row|
-    # #         data = row.split(", ")
-    # #         individual = data[0]
-    # #         most_lovable = data[1]
-    # #         smartest = data[2]
-    # #         fattest = data[3]
-    # #         biggest_nerd = data[4]
-    # #         greatest_anarchist = data[5]
-    # #         walk_of_fame_rating = data[6]
-    # #     end
-    # # end

@@ -3,9 +3,9 @@
 class Card < ActiveRecord::Base
 
     def self.import_deck(deck)
-        #use filename later
-        # csv_text = File.read(filename)
 
+
+        # Note the current deck for use later
         @@deck = deck
 
         Card.destroy_all

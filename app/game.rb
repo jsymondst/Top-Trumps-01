@@ -168,7 +168,7 @@ class Game
                 flip_message = "Opponent won the coin flip. They will choose first."
         end
 
-        PROMPT.keypress(flip_message, timeout: 2)
+        PROMPT.keypress(flip_message, timeout: 5)
 
         game_result = nil
 
@@ -180,7 +180,7 @@ class Game
                     clash_result = player_clash
             end
 
-            PROMPT.keypress("Your Points: #{player_points} | Opponent's Points: #{ai_points}", timeout: 3)
+            PROMPT.keypress("Your Points: #{player_points} | Opponent's Points: #{ai_points}", timeout: 4)
             
             if clash_result != "draw"
                 active_player = clash_result
